@@ -104,13 +104,15 @@ void main() {
         sourceType: DataSourceType.network,
         uri: 'someUri',
         formatHint: VideoFormat.dash,
+        userAgent: "agent"
       ));
       expect(
         log,
         <Matcher>[
           isMethodCall('create', arguments: <String, Object>{
             'uri': 'someUri',
-            'formatHint': 'dash'
+            'formatHint': 'dash',
+            'userAgent': 'agent'
           })
         ],
       );

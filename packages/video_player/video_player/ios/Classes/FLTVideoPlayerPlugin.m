@@ -45,7 +45,7 @@ int64_t FLTCMTimeToMillis(CMTime time) {
 @property(nonatomic, readonly) bool isPlaying;
 @property(nonatomic) bool isLooping;
 @property(nonatomic, readonly) bool isInitialized;
-- (instancetype)initWithURL:(NSURL*)url frameUpdater:(FLTFrameUpdater*)frameUpdater;
+- (instancetype)initWithURL:(NSURL*)url userAgent:nil frameUpdater:(FLTFrameUpdater*)frameUpdater;
 - (void)play;
 - (void)pause;
 - (void)setIsLooping:(bool)isLooping;
@@ -61,7 +61,7 @@ static void* playbackBufferFullContext = &playbackBufferFullContext;
 @implementation FLTVideoPlayer
 - (instancetype)initWithAsset:(NSString*)asset frameUpdater:(FLTFrameUpdater*)frameUpdater {
   NSString* path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
-  return [self initWithURL:[NSURL fileURLWithPath:path] frameUpdater:frameUpdater];
+  return [self initWithURL:[NSURL fileURLWithPath:path] userAgent:nil frameUpdater:frameUpdater];
 }
 
 - (void)addObservers:(AVPlayerItem*)item {
@@ -161,7 +161,10 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
   _displayLink.paused = YES;
 }
 
-- (instancetype)initWithURL:(NSURL*)url frameUpdater:(FLTFrameUpdater*)frameUpdater {
+- (instancetype)initWithURL:(NSURL*)url (String*)userAgent frameUpdater:(FLTFrameUpdater*)frameUpdater {
+  NSMutableDictionary * headers = [NSMutableDictionary dictionary];
+  [headers setObject:userAgent forKey:@"User-Agent"];
+  AVURLAsset * asset = [AVURLAsset URLAssetWithURL:uriArg options:@{@"AVURLAssetHTTPHeaderFieldsKey" : headers}];
   AVPlayerItem* item = [AVPlayerItem playerItemWithURL:url];
   return [self initWithPlayerItem:item frameUpdater:frameUpdater];
 }
@@ -486,6 +489,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     FLTFrameUpdater* frameUpdater = [[FLTFrameUpdater alloc] initWithRegistry:_registry];
     NSString* assetArg = argsMap[@"asset"];
     NSString* uriArg = argsMap[@"uri"];
+    NSString* userAgentArg = argsMap[@"userAgent"];
     FLTVideoPlayer* player;
     if (assetArg) {
       NSString* assetPath;
@@ -498,8 +502,15 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
       player = [[FLTVideoPlayer alloc] initWithAsset:assetPath frameUpdater:frameUpdater];
       [self onPlayerSetup:player frameUpdater:frameUpdater result:result];
     } else if (uriArg) {
-      player = [[FLTVideoPlayer alloc] initWithURL:[NSURL URLWithString:uriArg]
+      if(![userAgentArg isEqual:[NSNull null]] {
+        player = [[FLTVideoPlayer alloc] initWithURL:[NSURL URLWithString:uriArg]
+                                      userAgent:@"AVPlayer"
                                       frameUpdater:frameUpdater];
+      } else {
+        player = [[FLTVideoPlayer alloc] initWithURL:[NSURL URLWithString:uriArg]
+                                            userAgent:userAgentArg
+                                            frameUpdater:frameUpdater];
+      }
       [self onPlayerSetup:player frameUpdater:frameUpdater result:result];
     } else {
       result(FlutterMethodNotImplemented);

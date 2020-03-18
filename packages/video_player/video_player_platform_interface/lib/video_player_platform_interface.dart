@@ -141,6 +141,7 @@ class DataSource {
     this.formatHint,
     this.asset,
     this.package,
+    this.userAgent,
   });
 
   /// The way in which the video was originally loaded.
@@ -165,6 +166,10 @@ class DataSource {
   /// The package that the asset was loaded from. Only set for
   /// [DataSourceType.asset] videos.
   final String package;
+
+  /// Overrides default User-Agent header value. Only set for
+  /// [network] videos.
+  final String userAgent;
 }
 
 /// The way in which the video was originally loaded.

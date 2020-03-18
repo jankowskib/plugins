@@ -130,7 +130,8 @@ public class VideoPlayerPlugin implements MethodCallHandler, FlutterPlugin {
                     handle,
                     call.argument("uri"),
                     result,
-                    call.argument("formatHint"));
+                    call.argument("formatHint"),
+                    call.argument("userAgent"));
             videoPlayers.put(handle.id(), player);
           }
           break;

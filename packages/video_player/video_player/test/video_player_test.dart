@@ -48,6 +48,8 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
 
   @override
   VideoFormat get formatHint => null;
+  @override
+  String get userAgent => null;
 
   @override
   Future<ClosedCaptionFile> get closedCaptionFile => _loadClosedCaption();
@@ -201,6 +203,20 @@ void main() {
             <String, dynamic>{
               'uri': 'https://127.0.0.1',
               'formatHint': 'dash',
+            });
+      });
+      test('network with user agent', () async {
+        final VideoPlayerController controller = VideoPlayerController.network(
+            'https://127.0.0.1',
+            formatHint: null,
+            userAgent: "agent");
+        await controller.initialize();
+
+        expect(
+            fakeVideoPlayerPlatform.dataSourceDescriptions[0],
+            <String, dynamic>{
+              'uri': 'https://127.0.0.1',
+              'userAgent': 'agent',
             });
       });
 
