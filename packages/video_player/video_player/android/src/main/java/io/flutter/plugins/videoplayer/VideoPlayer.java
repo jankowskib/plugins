@@ -77,7 +77,7 @@ final class VideoPlayer {
     if (isHTTP(uri)) {
       dataSourceFactory =
           new DefaultHttpDataSourceFactory(
-              userAgent ? userAgent : "ExoPlayer",
+              userAgent != null ? userAgent : "ExoPlayer",
               null,
               DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
               DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
